@@ -1,0 +1,19 @@
+#!/usr/bin/env python
+
+import re, sys
+
+message_file = open(sys.argv[1], "r")
+message = message_file.readline()
+
+regex = r"^(build|chore|ci|docs|feat|fix|perf|refactor|revert|style|test)(\(\w+\))?: \w+.*$"
+
+matches = re.search(regex, message)
+
+if not matches:
+   print ('\033[91m\033[1m' + "Commit message does not follow the Conventional Commits standard." + '\033[0m')
+   print ("An example of a valid message is: ")
+   print ("  feat(US12345): add the 'remember me' button")
+   print ("More details at: https://www.conventionalcommits.org/en/v1.0.0/#summary")
+   print ('\033[91m\033[1m' + "Commit rejected." + '\033[0m')
+   print ('')
+   exit(1)
