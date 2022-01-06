@@ -1,0 +1,227 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.abvprp.aps.jgitver</groupId>
+  <artifactId>ci-demo</artifactId>
+  <version>0</version>
+  <packaging>jar</packaging>
+  <name>ci-demo</name>
+  <url>http://maven.apache.org</url>
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
+    <git-changelog-maven-plugin.version>1.78</git-changelog-maven-plugin.version>
+    <project.owner>Above Property</project.owner>
+  </properties>
+  <profiles>
+    <profile>
+      <id>github</id>
+      <activation>
+        <property>
+          <name>useGitHubPackages</name>
+          <value>true</value>
+        </property>
+      </activation>
+      <distributionManagement>
+        <repository>
+          <id>github</id>
+          <name>GitHub Packages</name>
+          <!-- GITHUB_REPOSITORY is set by the GitHub actions runner -->
+          <url>https://maven.pkg.github.com/${env.GITHUB_REPOSITORY}</url>
+          <snapshots>
+            <enabled>true</enabled>
+          </snapshots>
+        </repository>
+      </distributionManagement>
+    </profile>
+  </profiles>
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.1</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>validate</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <tasks>
+                <echo>used version: ${jgitver.used_version}</echo>
+                <echo>version calculated: ${jgitver.calculated_version}</echo>
+                <echo>dirty: ${jgitver.dirty}</echo>
+                <echo>head_committer_name: ${jgitver.head_committer_name}</echo>
+                <echo>head_commiter_email: ${jgitver.head_commiter_email}</echo>
+                <echo>head_commit_datetime: ${jgitver.head_commit_datetime}</echo>
+                <echo>git_sha1_full: ${jgitver.git_sha1_full}</echo>
+                <echo>git_sha1_8: ${jgitver.git_sha1_8}</echo>
+                <echo>branch_name: ${jgitver.branch_name}</echo>
+                <echo>head_tags: ${jgitver.head_tags}</echo>
+                <echo>head_annotated_tags: ${jgitver.head_annotated_tags}</echo>
+                <echo>head_lightweight_tags: ${jgitver.head_lightweight_tags}</echo>
+                <echo>base_tag: ${jgitver.base_tag}</echo>
+                <echo>all_tags: ${jgitver.all_tags}</echo>
+                <echo>all_annotated_tags: ${jgitver.all_annotated_tags}</echo>
+                <echo>all_lightweight_tags: ${jgitver.all_lightweight_tags}</echo>
+                <echo>all_version_tags: ${jgitver.all_version_tags}</echo>
+                <echo>all_version_annotated_tags: ${jgitver.all_version_annotated_tags}</echo>
+                <echo>all_version_lightweight_tags: ${jgitver.all_version_lightweight_tags}</echo>
+              </tasks>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>se.bjurr.gitchangelog</groupId>
+        <artifactId>git-changelog-maven-plugin</artifactId>
+        <version>${git-changelog-maven-plugin.version}</version>
+        <executions>
+          <execution>
+            <id>GenerateGitChangelog</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>git-changelog</goal>
+            </goals>
+            <configuration>
+              <file>target/CHANGELOG.md</file>
+              <fromCommit>0000000000000000000000000000000000000000</fromCommit>
+              <toRef>refs/heads/main</toRef>
+              <ignoreCommitsIfMessageMatches>^\\[maven-release-plugin\\].*|^\\[Gradle Release Plugin\\].*|^Merge.*</ignoreCommitsIfMessageMatches>
+              <noIssueName>Changes</noIssueName>
+              <untaggedName>Untagged</untaggedName>
+              <templateContent>
+                <![CDATA[
+# ${project.owner} ${project.artifactId} Change log
+{{#tags}}
+{{#ifReleaseTag .}}
+
+## [{{name}}](https://github.com/{{ownerName}}/{{repoName}}/releases/tag/{{name}}) ({{tagDate .}})
+  {{#ifContainsType commits type='feat'}}
+
+### Features
+
+    {{#commits}}
+      {{#ifCommitType . type='feat'}}
+ - {{#eachCommitScope .}} **{{.}}** {{/eachCommitScope}} {{{commitDescription .}}} ([{{authorName}}] at {{commitTime}} [{{hash}}](https://github.com/{{ownerName}}/{{repoName}}/commit/{{hash}}))
+      {{/ifCommitType}}
+    {{/commits}}
+  {{/ifContainsType}}
+  {{#ifContainsType commits type='fix'}}
+
+### Bug Fixes
+
+    {{#commits}}
+      {{#ifCommitType . type='fix'}}
+ - {{#eachCommitScope .}} **{{.}}** {{/eachCommitScope}} {{{commitDescription .}}} ([{{authorName}}] at {{commitTime}} [{{hash}}](https://github.com/{{ownerName}}/{{repoName}}/commit/{{hash}}))
+      {{/ifCommitType}}
+    {{/commits}}
+  {{/ifContainsType}}
+  {{#ifContainsType commits type='docs'}}
+
+### Documentation
+
+    {{#commits}}
+      {{#ifCommitType . type='docs'}}
+ - {{#eachCommitScope .}} **{{.}}** {{/eachCommitScope}} {{{commitDescription .}}} ([{{authorName}}] at {{commitTime}} [{{hash}}](https://github.com/{{ownerName}}/{{repoName}}/commit/{{hash}}))
+      {{/ifCommitType}}
+    {{/commits}}
+  {{/ifContainsType}}
+  {{#ifContainsType commits type='refactor'}}
+
+### Code Refactoring
+
+    {{#commits}}
+      {{#ifCommitType . type='refactor'}}
+ - {{#eachCommitScope .}} **{{.}}** {{/eachCommitScope}} {{{commitDescription .}}} ([{{authorName}}] at {{commitTime}} [{{hash}}](https://github.com/{{ownerName}}/{{repoName}}/commit/{{hash}}))
+      {{/ifCommitType}}
+    {{/commits}}
+  {{/ifContainsType}}
+  {{#ifContainsType commits type='perf'}}
+
+### Performance Improvements
+
+    {{#commits}}
+      {{#ifCommitType . type='perf'}}
+ - {{#eachCommitScope .}} **{{.}}** {{/eachCommitScope}} {{{commitDescription .}}} ([{{authorName}}] at {{commitTime}} [{{hash}}](https://github.com/{{ownerName}}/{{repoName}}/commit/{{hash}}))
+      {{/ifCommitType}}
+    {{/commits}}
+  {{/ifContainsType}}
+  {{#ifContainsType commits type='test'}}
+
+### tests
+
+    {{#commits}}
+      {{#ifCommitType . type='test'}}
+ - {{#eachCommitScope .}} **{{.}}** {{/eachCommitScope}} {{{commitDescription .}}} ([{{authorName}}] at {{commitTime}} [{{hash}}](https://github.com/{{ownerName}}/{{repoName}}/commit/{{hash}}))
+      {{/ifCommitType}}
+    {{/commits}}
+  {{/ifContainsType}}
+  {{#ifContainsType commits type='build'}}
+
+### Builds
+
+    {{#commits}}
+      {{#ifCommitType . type='build'}}
+ - {{#eachCommitScope .}} **{{.}}** {{/eachCommitScope}} {{{commitDescription .}}} ([{{authorName}}] at {{commitTime}} [{{hash}}](https://github.com/{{ownerName}}/{{repoName}}/commit/{{hash}}))
+      {{/ifCommitType}}
+    {{/commits}}
+  {{/ifContainsType}}
+  {{#ifContainsType commits type='ci'}}
+
+### Continuous Integration
+
+    {{#commits}}
+      {{#ifCommitType . type='ci'}}
+ - {{#eachCommitScope .}} **{{.}}** {{/eachCommitScope}} {{{commitDescription .}}} ([{{authorName}}] at {{commitTime}} [{{hash}}](https://github.com/{{ownerName}}/{{repoName}}/commit/{{hash}}))
+      {{/ifCommitType}}
+    {{/commits}}
+  {{/ifContainsType}}
+  {{#ifContainsType commits type='chore'}}
+
+### Chores
+
+    {{#commits}}
+      {{#ifCommitType . type='chore'}}
+ - {{#eachCommitScope .}} **{{.}}** {{/eachCommitScope}} {{{commitDescription .}}} ([{{authorName}}] at {{commitTime}} [{{hash}}](https://github.com/{{ownerName}}/{{repoName}}/commit/{{hash}}))
+      {{/ifCommitType}}
+    {{/commits}}
+  {{/ifContainsType}}
+  {{#ifContainsType commits type='revert'}}
+
+### Reverts
+
+    {{#commits}}
+      {{#ifCommitType . type='revert'}}
+ - {{#eachCommitScope .}} **{{.}}** {{/eachCommitScope}} {{{commitDescription .}}} ([{{authorName}}] at {{commitTime}} [{{hash}}](https://github.com/{{ownerName}}/{{repoName}}/commit/{{hash}}))
+      {{/ifCommitType}}
+    {{/commits}}
+  {{/ifContainsType}}
+  {{#ifContainsType commits type='style'}}
+
+### Styling
+
+    {{#commits}}
+      {{#ifCommitType . type='style'}}
+ - {{#eachCommitScope .}} **{{.}}** {{/eachCommitScope}} {{{commitDescription .}}} ([{{authorName}}] at {{commitTime}} [{{hash}}](https://github.com/{{ownerName}}/{{repoName}}/commit/{{hash}}))
+      {{/ifCommitType}}
+    {{/commits}}
+  {{/ifContainsType}}
+{{/ifReleaseTag}}
+{{/tags}}
+]]>
+              </templateContent>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>
