@@ -3,6 +3,9 @@ name: Build and Test
 
 on:
   push:
+    paths-ignore:
+      - 'package.json'
+      - 'CHANGELOG.md'
     branches-ignore:
       - 'develop'
       - 'main'
