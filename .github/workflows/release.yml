@@ -31,6 +31,7 @@ jobs:
     #   id: vars
     #   run: echo ::set-output name=tag::${{steps.tag_version.outputs.new_version}}
 
+    - run: npm i conventional-changelog-conventionalcommits
     - name: Conventional Changelog Action
       id: changelog
       uses: TriPSs/conventional-changelog-action@v3.10.0
