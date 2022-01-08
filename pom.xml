@@ -1,19 +1,49 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>com.abvprp.aps.jgitver</groupId>
-  <artifactId>ci-demo</artifactId>
+  <groupId>com.abvprp.aps</groupId>
+  <artifactId>template</artifactId>
+  <name>${project.artifactId}</name>
   <version>0</version>
   <packaging>jar</packaging>
-  <name>ci-demo</name>
-  <url>http://maven.apache.org</url>
+  <inceptionYear>2021</inceptionYear>
+  <organization>
+    <name>Above Property LLC</name>
+  </organization>
+  <url>https://www.aboveproperty.com</url>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
     <git-changelog-maven-plugin.version>1.78</git-changelog-maven-plugin.version>
+    <dependency-check-maven.version>6.5.1</dependency-check-maven.version>
     <project.owner>Above Property</project.owner>
   </properties>
   <profiles>
+    <profile>
+      <id>securitycheck</id>
+      <build>
+        <plugins>
+          <!-- Fail the build if any dependencies have
+          a CVSS vulnerability score of >=8 (HIGH) -->
+          <plugin>
+            <groupId>org.owasp</groupId>
+            <artifactId>dependency-check-maven</artifactId>
+            <version>${dependency-check-maven.version}</version>
+            <configuration>
+              <suppressionFiles>${basedir}/.suppressed-dependency-check.xml</suppressionFiles>
+              <failBuildOnCVSS>8</failBuildOnCVSS>
+            </configuration>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>check</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
     <profile>
       <id>github</id>
       <activation>
@@ -39,12 +69,33 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>3.8.1</version>
+      <version>4.11</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
   <build>
     <plugins>
+      <!-- site lifecycle, see https://maven.apache.org/ref/current/maven-core/lifecycles.html#site_Lifecycle -->
+      <plugin>
+        <artifactId>maven-site-plugin</artifactId>
+        <version>3.7.1</version>
+      </plugin>
+      <plugin>
+        <artifactId>maven-project-info-reports-plugin</artifactId>
+        <version>3.0.0</version>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>attach-javadocs</id>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
       <plugin>
         <artifactId>maven-antrun-plugin</artifactId>
         <executions>
