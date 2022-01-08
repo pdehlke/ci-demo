@@ -35,7 +35,8 @@ jobs:
       id: changelog
       uses: TriPSs/conventional-changelog-action@v3.10.0
       with:
-        preset: conventionalcommits
+        config-file-path: ./.changelog.config.js
+        # preset: conventionalcommits
         skip-version-file: true
         skip-commit: true
         github-token: ${{ secrets.GITHUB_TOKEN }}
