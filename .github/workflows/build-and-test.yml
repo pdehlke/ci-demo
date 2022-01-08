@@ -19,49 +19,34 @@ jobs:
       with:
         fetch-depth: 0
 
-    - name: Bump version and push tag
-      id: tag_version
-      uses: mathieudutour/github-tag-action@v6.0
+    - run: npm i conventional-changelog-conventionalcommits
+
+    - name: Conventional Changelog Action
+      id: changelog
+      uses: TriPSs/conventional-changelog-action@v3.10.0
       with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        create_annotated_tag: true
-
-    - run: git tag ${{ steps.tag_version.outputs.new_tag }}
-
-    # This is here as a demonstration of the technique.
-    # We obviously could use
-    # steps.tag_version.outputs.new_version directly, but
-    # I wanted to show how to manipulate a job's environment.
-    - name: Get tag/branch name
-      id: vars
-      run: echo ::set-output name=tag::${{steps.tag_version.outputs.new_version}}
+        config-file-path: ./.changelog.config.js
+        skip-version-file: true
+        skip-commit: true
+        github-token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Set up JDK 1.8
-      uses: actions/setup-java@v1
+      uses: actions/setup-java@v2
       with:
-        java-version: 1.8
+        cache: maven
+        distribution: zulu
+        java-version: 8.0.312+7
 
-    - name: Build the JAR
-      id: builder
-      run: mvn --no-transfer-progress -Djgitver.use-version=${{ steps.vars.outputs.tag }} -DuseGitHubPackages=true clean verify
+    - name: Deploy to GitHub
+      run: mvn --no-transfer-progress -Psecuritycheck -Djgitver.use-version=${{ steps.changelog.outputs.version }} -DuseGitHubPackages=true clean verify
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  notify:
-
-      name: Notify on Slack
-      runs-on: ubuntu-latest
-      # Only run this workflow when "build" workflow succeeds
-      needs: [build]
-
-      # Only run this workflow if the target is main branch and this is a pull_request event
-      if: ${{ github.base_ref == 'main' && github.event_name == 'pull_request' }}
-
-      steps:
-
-        - uses: abinoda/slack-action@master
-          env:
-            SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
-          with:
-            args: '{\"channel\":\"${{ secrets.SLACK_PR_CHANNEL_ID }}\",\"blocks\":[{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"*Pull Request:* ${{ github.event.pull_request.title }}\"}},{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"*Contributor :* ${{ github.event.pull_request.user.login }}\n*Request State:* ${{ github.event.pull_request.state }}\"}},{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"<${{ github.event.pull_request.html_url }}|View Pull Request>\"}}]}'
-          if: success()
+    - name: Create a GitHub release
+      uses: ncipollo/release-action@v1
+      with:
+        artifacts: "target/*.jar,LICENSE.txt,target/CHANGELOG.md"
+        tag: ${{ steps.changelog.outputs.tag }}
+        name: Release ${{ steps.changelog.outputs.version }}
+        body: ${{ steps.changelog.outputs.clean_changelog }}
+        token: ${{ secrets.GITHUB_TOKEN }}
