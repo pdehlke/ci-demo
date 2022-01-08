@@ -41,6 +41,7 @@ jobs:
       uses: actions/setup-java@v2
       with:
         cache: maven
+        distribution: zulu
         java-version: 1.8
 
     - name: Deploy to GitHub
