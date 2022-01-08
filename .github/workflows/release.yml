@@ -42,7 +42,7 @@ jobs:
       with:
         cache: maven
         distribution: zulu
-        java-version: 1.8
+        java-version: 8.0.312+7
 
     - name: Deploy to GitHub
       run: mvn --no-transfer-progress -Djgitver.use-version=${{ steps.vars.outputs.tag }} -DuseGitHubPackages=true clean deploy
