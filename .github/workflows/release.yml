@@ -45,7 +45,7 @@ jobs:
         java-version: 8.0.312+7
 
     - name: Deploy to GitHub
-      run: mvn --no-transfer-progress -Djgitver.use-version=${{ steps.vars.outputs.tag }} -DuseGitHubPackages=true clean deploy
+      run: mvn --no-transfer-progress -Djgitver.use-version=${{ steps.changelog.outputs.tag }} -DuseGitHubPackages=true clean deploy
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
