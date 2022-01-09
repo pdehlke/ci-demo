@@ -1,0 +1,36 @@
+name: "CI/CD gitflow: push feature branch"
+on:
+  push:
+    branches: [ feature/* ]
+
+jobs:
+  verify-feature-build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check out code
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+
+    - name: Set up JDK 1.8
+      id: checkout
+      uses: actions/setup-java@v2
+      with:
+        cache: maven
+        distribution: zulu
+        java-version: 8.0.312+7
+
+    - name: Install Commitlint Dependencies
+      id: dependencies
+      run: npm install @commitlint/config-conventional
+
+    - name: Lint commit messages
+      id: commitlint
+      uses: wagoid/commitlint-github-action@v4
+
+    - name: maven verify
+      id: verify
+      run: mvn --no-transfer-progress -Psecuritycheck -Djgitver.skip=true clean verify
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+

@@ -1,13 +1,12 @@
-name: release
-
+name: "CI/CD gitflow: open pre-release PR"
 on:
   pull_request:
-    branches: main
-    types: [closed]
-
+    branches:
+      - develop
+    types: ['opened', 'edited', 'reopened', 'synchronize']
 
 jobs:
-  build:
+  process-pr-open:
     runs-on: ubuntu-latest
     steps:
     - name: Check out code
@@ -15,7 +14,23 @@ jobs:
       with:
         fetch-depth: 0
 
-    - run: npm i conventional-changelog-conventionalcommits
+    # We expect commits and PR names to follow conventional
+    # commit standards
+    - name: Install Commitlint Dependencies
+      id: install-commitlint-dependencies
+      run: npm install @commitlint/config-conventional
+
+    - name: Lint commit messages
+      id: commitlint
+      uses: wagoid/commitlint-github-action@v4
+
+    - name: Lint PR name
+      id: pr-name-lint
+      uses: JulienKode/pull-request-name-linter-action@v0.4.0
+
+    - name: Install conventional commit dependencies
+      id: install-cc-dependencies
+      run: npm i conventional-changelog-conventionalcommits
 
     - name: Conventional Changelog Action
       id: changelog
@@ -27,33 +42,38 @@ jobs:
         github-token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Set up JDK 1.8
+      id: setup-java
       uses: actions/setup-java@v2
       with:
         cache: maven
         distribution: zulu
         java-version: 8.0.312+7
 
-    - name: Deploy to GitHub
-      run: mvn --no-transfer-progress -Djgitver.use-version=${{ steps.changelog.outputs.version }} -DuseGitHubPackages=true clean deploy
+    - name: Build assets
+      id: build-pre-release-assets
+      run: mvn -Djgitver.config=.mvn/jgitver.config.develop.xml --no-transfer-progress -DuseGitHubPackages=true clean deploy
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Create a GitHub release
-      uses: ncipollo/release-action@v1
+    # We should be running tests here.
+
+    - name: Create pre-release package
+      id: pre-release-package
+      uses: "marvinpinto/action-automatic-releases@latest"
       with:
-        artifacts: "target/*.jar,LICENSE.txt,target/CHANGELOG.md"
-        tag: ${{ steps.changelog.outputs.tag }}
-        name: Release ${{ steps.changelog.outputs.version }}
-        body: ${{ steps.changelog.outputs.clean_changelog }}
-        token: ${{ secrets.GITHUB_TOKEN }}
+        repo_token: "${{ secrets.GITHUB_TOKEN }}"
+        automatic_release_tag: "latest"
+        prerelease: true
+        title: "Development Build"
+        files: |
+          LICENSE.txt
+          target/*.jar
 
   notify:
       name: Notify on Slack
       runs-on: ubuntu-latest
-      # Only run this workflow when "build" workflow succeeds
-      needs: [build]
-      # Only run this workflow if it target is main branch on pull_request event
-      if: ${{ github.base_ref == 'main' && github.event_name == 'pull_request' }}
+      # Only run this workflow when "process-pr-open" workflow succeeds
+      needs: [process-pr-open]
       steps:
         - uses: abinoda/slack-action@master
           env:
