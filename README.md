@@ -1,4 +1,6 @@
-# CI demo of jgitver-maven-plugin
+# CI demo of jgitver-maven-plugin 
+
+
 
 <div align="center">
 
