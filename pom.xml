@@ -145,7 +145,7 @@
             <configuration>
               <file>target/CHANGELOG.md</file>
               <fromCommit>0000000000000000000000000000000000000000</fromCommit>
-              <toRef>refs/heads/main</toRef>
+              <toRef>refs/remotes/origin/main</toRef>
               <ignoreCommitsIfMessageMatches>^\\[maven-release-plugin\\].*|^\\[Gradle Release Plugin\\].*|^Merge.*</ignoreCommitsIfMessageMatches>
               <noIssueName>Changes</noIssueName>
               <untaggedName>Untagged</untaggedName>
