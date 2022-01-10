@@ -1,12 +1,12 @@
 module.exports = {
   extends: ['@commitlint/config-conventional'],
-  parserPreset: {
-    parserOpts: {
-      issuePrefixes: ['US', 'DE', 'ZD'],
-    },
-  },
   rules: {
-    'references-empty': [1, 'never'],
+    'subject-case': [
+      2,
+      'never',
+      ['upper-case'],
+    ],
+    'references-empty': [0, 'never'],
     'body-max-line-length': [0, 'always', 'Infinity'],
   },
 };
