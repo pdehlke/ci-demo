@@ -39,7 +39,7 @@ jobs:
 
     - name: maven verify
       id: verify
-      run: mvn clean verify org.owasp:dependency-check-maven:aggregate --file pom.xml -Dfmt.skip=true -DskipTests=true -fae -B -Dorg.slf4j.simpleLogger.defaultLogLevel=WARN -DfailBuildOnCVSS=7
+      run: mvn clean verify org.owasp:dependency-check-maven:aggregate --file pom.xml -Dfmt.skip=true -DskipTests=true -fae -B -DfailBuildOnCVSS=7
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
