@@ -3,6 +3,7 @@
 <div align="center">
 # zoxide
 
+  
 [![crates.io][crates.io-badge]][releases]
 [![Downloads][downloads-badge]][releases]
 </div>
