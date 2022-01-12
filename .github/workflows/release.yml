@@ -1,12 +1,16 @@
 name: release
 
 on:
-  push:
-    branches: main
+  pull_request:
+    branches:
+      - main
+    types:
+      - closed
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    if: github.event.pull_request.merged == true
     steps:
     - name: Check out code
       uses: actions/checkout@v2
@@ -48,10 +52,11 @@ jobs:
   notify:
       name: Notify on Slack
       runs-on: ubuntu-latest
+      if: github.event.pull_request.merged == true
       # Only run this workflow when "build" workflow succeeds
       needs: [build]
       # Only run this workflow if it target is main branch on pull_request event
-      if: ${{ github.base_ref == 'main' && github.event_name == 'pull_request' }}
+#       if: ${{ github.base_ref == 'main' && github.event_name == 'pull_request' }}
       steps:
         - uses: abinoda/slack-action@master
           env:
