@@ -1,9 +1,6 @@
 # CI demo of jgitver-maven-plugin
 
 <div align="center">
-  
-  
-
 # zoxide
 
 [![crates.io][crates.io-badge]][releases]
