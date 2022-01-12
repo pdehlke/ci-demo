@@ -5,6 +5,7 @@ on:
 
 jobs:
   stale:
+    name: Prune Stale Issues and Pull Requests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/stale@v4

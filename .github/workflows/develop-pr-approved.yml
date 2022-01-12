@@ -26,6 +26,7 @@ on:
 
 jobs:
   automerge:
+    name: Automatically Merge Pull Request
     runs-on: ubuntu-latest
     steps:
       - name: automerge

@@ -5,6 +5,7 @@ on:
 
 jobs:
   verify-feature-build:
+    name: Build Feature Branch
     runs-on: ubuntu-latest
     steps:
     - name: Check out code
