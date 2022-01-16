@@ -22,37 +22,7 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-owasp-
 
-    - name: Set up JDK 1.8
-      id: checkout
-      uses: actions/setup-java@v2
-      with:
-        cache: maven
-        distribution: zulu
-        java-version: 8.0.312+7
-        
-    - name: Set up nexus
-      uses: s4u/maven-settings-action@v2.3.0
-      with:
-        servers: >
-          [
-            {
-                "id": "dev-nexus-abvprp",
-                "username": "${{ secrets.nexus_username }}",
-                "password": "${{ secrets.nexus_password }}"
-            }
-          ]
-        mirrors: >
-          [
-            {
-              "id": "dev-nexus-abvprp",
-              "name": "Above Property Nexus",
-              "mirrorOf": "external:*",
-              "url": "https://nexus.dev.abvprp.com/repository/Public-Repositories/"
-            }
-          ]
-        
-    - run: cat $HOME/.m2/settings.xml
-    
+
     - name: maven-settings-xml-action
       uses: whelk-io/maven-settings-xml-action@v20
       with:
@@ -75,11 +45,58 @@ jobs:
               "password": "${{ secrets.GITHUB_TOKEN }}"
             }
           ]
-        repositories: >
+        # repositories: >
+        #   [
+        #     {
+        #       "id": "github-packages",
+        #       "url": "https://maven.pkg.github.com/aboveproperty/*"
+        #     }
+        #   ]
+        # mirrors: >
+        #   [
+        #     {
+        #       "id": "dev-nexus-abvprp",
+        #       "name": "Above Property Nexus",
+        #       "mirrorOf": "external:*,!github-packages",
+        #       "url": "https://nexus.dev.abvprp.com/repository/Public-Repositories/"
+        #     }
+        #   ]
+        # profiles: >
+        #   [
+        #     {
+        #       "id": "AboveProperty-Profile",
+        #       "name": "foo.profile",
+        #       "url": "http://foo.bar.profile",
+        #       "properties": {
+        #         "foo": "property-1",
+        #         "bar": "property-2"
+        #       }
+        #     }
+        #   ]
+        # active_profiles: >
+        #   [
+        #     "AboveProperty-Profile"
+        #   ]
+
+    - run: cat m2_settings.xml
+
+    - name: Set up JDK 1.8
+      id: checkout
+      uses: actions/setup-java@v2
+      with:
+        cache: maven
+        distribution: zulu
+        java-version: 8.0.312+7
+
+    - name: Set up nexus
+      uses: s4u/maven-settings-action@v2.3.0
+      with:
+        servers: >
           [
             {
-              "id": "github-packages",
-              "url": "https://maven.pkg.github.com/aboveproperty/*"
+                "id": "dev-nexus-abvprp",
+                "username": "${{ secrets.nexus_username }}",
+                "password": "${{ secrets.nexus_password }}"
             }
           ]
         mirrors: >
@@ -87,27 +104,12 @@ jobs:
             {
               "id": "dev-nexus-abvprp",
               "name": "Above Property Nexus",
-              "mirrorOf": "external:*,!github-packages",
+              "mirrorOf": "external:*",
               "url": "https://nexus.dev.abvprp.com/repository/Public-Repositories/"
             }
           ]
-        profiles: >
-          [
-            {
-              "id": "AboveProperty-Profile",
-              "name": "foo.profile",
-              "url": "http://foo.bar.profile",
-              "properties": {
-                "foo": "property-1",
-                "bar": "property-2"
-              }
-            }
-          ]
-        active_profiles: >
-          [
-            "AboveProperty-Profile"
-          ]
-    - run: cat m2_settings.xml
+
+    - run: cat $HOME/.m2/settings.xml
 
     - name: Install Commitlint Dependencies
       id: dependencies
