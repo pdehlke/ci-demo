@@ -32,6 +32,10 @@ jobs:
             "id": "dev-nexus-abvprp",
             "username": "${{ secrets.NEXUS_USERNAME }}",
             "password": "${{ secrets.NEXUS_PASSWORD }}"
+          }, {
+            "id": "github",
+            "username": "${{ github.actor }}",
+            "password": "${{ secrets.GITHUB_TOKEN }}"
           }]'
 
       # with:
