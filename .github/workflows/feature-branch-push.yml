@@ -15,38 +15,14 @@ jobs:
 
     - name: maven-settings-xml-action
       uses: whelk-io/maven-settings-xml-action@v20
-      with:
-        output_file: m2_settings.xml
-        repositories: '[{ "id": "github-packages", "url": "https://maven.pkg.github.com/sabio-engineering/*" }]'
-        servers: '[{ "id": "github-packages", "username": "read-only-access", "password": "${{ secrets.NEXUS_PASSWORD }}" }, { "id": "fubar", "username": "${{ secrets.NEXUS_USERNAME }}", "password": "${{ secrets.NEXUS_PASSWORD }}"}]'
-    - name: Cache Maven packages
-      uses: actions/cache@v2
-      with:
-        path: ~/.m2
-        key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-        restore-keys: ${{ runner.os }}-m2
-
       # with:
       #   output_file: m2_settings.xml
-      #   servers: >
-      #     [
-      #       {
-      #         "id": "dev-nexus-abvprp",
-      #         "username": "${{ secrets.NEXUS_USERNAME }}",
-      #         "password": "${{ secrets.NEXUS_PASSWORD }}"
-      #       },
-      #       {
-      #         "id": "github-packages",
-      #         "username": "${{ secrets.GH_USER }}",
-      #         "password": "${{ secrets.GH_PASSWORD }}"
-      #       }
-      #     ]
-        #     {
-        #       "id": "github",
-        #       "username": "${{ github.actor }}",
-        #       "password": "${{ secrets.GITHUB_TOKEN }}"
-        #     }
-        #   ]
+      #   repositories: '[{ "id": "github-packages", "url": "https://maven.pkg.github.com/sabio-engineering/*" }]'
+      #   servers: '[{ "id": "github-packages", "username": "read-only-access", "password": "${{ secrets.NEXUS_PASSWORD }}" }, { "id": "fubar", "username": "${{ secrets.NEXUS_USERNAME }}", "password": "${{ secrets.NEXUS_PASSWORD }}"}]'
+
+      with:
+        output_file: m2_settings.xml
+        servers: '[{"id":"dev-nexus-abvprp","username":"${{ secrets.NEXUS_USERNAME }}","password":"${{ secrets.NEXUS_PASSWORD }}"},{"id":"github-packages","username":"${{ secrets.GH_USER }}","password":"${{ secrets.GH_PASSWORD }}"},{"id":"github","username":"${{ github.actor }}","password":"${{ secrets.GITHUB_TOKEN }}"}]'
         # repositories: >
         #   [
         #     {
@@ -81,6 +57,13 @@ jobs:
         #   ]
 
     - run: cat m2_settings.xml
+
+    - name: Cache Maven packages
+      uses: actions/cache@v2
+      with:
+        path: ~/.m2
+        key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+        restore-keys: ${{ runner.os }}-m2
 
     - name: Set up JDK 1.8
       id: checkout
