@@ -30,21 +30,36 @@ jobs:
         servers: >
           [
             {
-              "id": "dev-nexus-abvprp",
-              "username": "${{ secrets.NEXUS_USERNAME }}",
-              "password": "${{ secrets.NEXUS_PASSWORD }}"
-            },
-            {
-              "id": "github-packages",
-              "username": "${{secrets.GH_USER }}",
-              "password": "${{ secrets.GH_PASSWORD }}"
-            },
-            {
-              "id": "github",
-              "username": "${{ github.actor }}",
-              "password": "${{ secrets.GITHUB_TOKEN }}"
+              "id": "some-id",
+              "username": "${env.USER}",
+              "password": "${env.PASS}",
+              "configuration": {
+                "httpConfiguration": {
+                  "all": {
+                    "usePreemptive": "true"
+                  }
+                }
+              }
             }
           ]
+        # servers: >
+        #   [
+        #     {
+        #       "id": "dev-nexus-abvprp",
+        #       "username": "${{ secrets.NEXUS_USERNAME }}",
+        #       "password": "${{ secrets.NEXUS_PASSWORD }}"
+        #     },
+        #     {
+        #       "id": "github-packages",
+        #       "username": "${{secrets.GH_USER }}",
+        #       "password": "${{ secrets.GH_PASSWORD }}"
+        #     },
+        #     {
+        #       "id": "github",
+        #       "username": "${{ github.actor }}",
+        #       "password": "${{ secrets.GITHUB_TOKEN }}"
+        #     }
+        #   ]
         # repositories: >
         #   [
         #     {
