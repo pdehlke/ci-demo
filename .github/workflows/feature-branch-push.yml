@@ -13,46 +13,46 @@ jobs:
       with:
         fetch-depth: 0
 
-    - name: Cache owasp-dependency-check files
-      id: maven-cache
-      uses: actions/cache@v2
-      with:
-        path: ~/.m2/repository
-        key: ${{ runner.os }}-owasp-${{ hashFiles('**/pom.xml') }}
-        restore-keys: |
-          ${{ runner.os }}-owasp-
-
-
     - name: maven-settings-xml-action
       uses: whelk-io/maven-settings-xml-action@v20
       with:
-        output_file: m2_settings.xml
-        servers: >
-          [
-            {
-              "id": "dev-nexus-abvprp",
-              "username": "${{ secrets.NEXUS_USERNAME }}",
-              "password": "${{ secrets.NEXUS_PASSWORD }}"
-            },
-            {
-              "id": "github-packages",
-              "username": "${{ secrets.GH_USER }}",
-              "password": "${{ secrets.GH_PASSWORD }}"
-            }
-          ]
+          repositories: '[{ "id": "github-packages", "url": "https://maven.pkg.github.com/sabio-engineering/*" }]'
+          servers: '[{ "id": "github-packages", "username": "read-only-access", "password": "${{ secrets.PACKAGE_ACCESS_TOKEN }}" }, { "id": "github", "username": "${{ github.actor }}", "password": "${{ secrets.GITHUB_TOKEN }}"}]'
+    - name: Cache Maven packages
+      uses: actions/cache@v2
+      with:
+        path: ~/.m2
+        key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+        restore-keys: ${{ runner.os }}-m2
+
+      # with:
+      #   output_file: m2_settings.xml
+      #   servers: >
+      #     [
+      #       {
+      #         "id": "dev-nexus-abvprp",
+      #         "username": "${{ secrets.NEXUS_USERNAME }}",
+      #         "password": "${{ secrets.NEXUS_PASSWORD }}"
+      #       },
+      #       {
+      #         "id": "github-packages",
+      #         "username": "${{ secrets.GH_USER }}",
+      #         "password": "${{ secrets.GH_PASSWORD }}"
+      #       }
+      #     ]
         #     {
         #       "id": "github",
         #       "username": "${{ github.actor }}",
         #       "password": "${{ secrets.GITHUB_TOKEN }}"
         #     }
         #   ]
-        repositories: >
-          [
-            {
-              "id": "github-packages",
-              "url": "https://maven.pkg.github.com/aboveproperty/*"
-            }
-          ]
+        # repositories: >
+        #   [
+        #     {
+        #       "id": "github-packages",
+        #       "url": "https://maven.pkg.github.com/aboveproperty/*"
+        #     }
+        #   ]
         # mirrors: >
         #   [
         #     {
