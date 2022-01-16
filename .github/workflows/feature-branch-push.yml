@@ -29,6 +29,24 @@ jobs:
         cache: maven
         distribution: zulu
         java-version: 8.0.312+7
+        
+    - name: Set up nexus
+      uses: s4u/maven-settings-action@v2.3.0
+      with:
+        servers: |
+          [{
+              "id": "dev-nexus-abvprp",
+              "username": "${{ secrets.nexus_username }}",
+              "password": "${{ secrets.nexus_password }}"
+          }]
+        mirrors: '[{
+          "id": "dev-nexus-abvprp",
+          "name": "Above Property Nexus",
+          "mirrorOf": "external:*",
+          "url": "https://nexus.dev.abvprp.com/repository/Public-Repositories/"
+        }]'
+        
+    - run: cat .m2/settings.xml
 
     - name: Install Commitlint Dependencies
       id: dependencies
