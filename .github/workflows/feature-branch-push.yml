@@ -36,7 +36,7 @@ jobs:
             },
             {
               "id": "github-packages",
-              "username": "${{secrets.GH_USER }}",
+              "username": "${{ secrets.GH_USER }}",
               "password": "${{ secrets.GH_PASSWORD }}"
             }
           ]
