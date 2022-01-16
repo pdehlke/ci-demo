@@ -33,13 +33,13 @@ jobs:
               "id": "dev-nexus-abvprp",
               "username": "${{ secrets.NEXUS_USERNAME }}",
               "password": "${{ secrets.NEXUS_PASSWORD }}"
+            },
+            {
+              "id": "github-packages",
+              "username": "${{secrets.GH_USER }}",
+              "password": "${{ secrets.GH_PASSWORD }}"
             }
           ]
-        #     {
-        #       "id": "github-packages",
-        #       "username": "${{secrets.GH_USER }}",
-        #       "password": "${{ secrets.GH_PASSWORD }}"
-        #     },
         #     {
         #       "id": "github",
         #       "username": "${{ github.actor }}",
