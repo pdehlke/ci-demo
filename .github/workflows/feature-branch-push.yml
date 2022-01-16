@@ -13,10 +13,18 @@ jobs:
       with:
         fetch-depth: 0
 
+    - name: Set up JDK 1.8
+      id: checkout
+      uses: actions/setup-java@v2
+      with:
+        cache: maven
+        distribution: zulu
+        java-version: 8.0.312+7
+
     - name: maven-settings-xml-action
       uses: whelk-io/maven-settings-xml-action@v20
       with:
-        output_file: m2_settings.xml
+        # output_file: m2_settings.xml
         repositories: >
           [
             {
@@ -46,24 +54,24 @@ jobs:
               "url": "https://nexus.dev.abvprp.com/repository/Public-Repositories/"
             }
           ]
-        # profiles: >
-        #   [
-        #     {
-        #       "id": "AboveProperty-Profile",
-        #       "name": "foo.profile",
-        #       "url": "http://foo.bar.profile",
-        #       "properties": {
-        #         "foo": "property-1",
-        #         "bar": "property-2"
-        #       }
-        #     }
-        #   ]
-        # active_profiles: >
-        #   [
-        #     "AboveProperty-Profile"
-        #   ]
+        profiles: >
+          [
+            {
+              "id": "AboveProperty-Profile",
+              "name": "foo.profile",
+              "url": "http://foo.bar.profile",
+              "properties": {
+                "foo": "property-1",
+                "bar": "property-2"
+              }
+            }
+          ]
+        active_profiles: >
+          [
+            "AboveProperty-Profile"
+          ]
 
-    - run: cat m2_settings.xml
+    - run: cat .m2/settings.xml
 
     - name: Cache Maven packages
       uses: actions/cache@v2
@@ -71,14 +79,6 @@ jobs:
         path: ~/.m2
         key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
         restore-keys: ${{ runner.os }}-m2
-
-    - name: Set up JDK 1.8
-      id: checkout
-      uses: actions/setup-java@v2
-      with:
-        cache: maven
-        distribution: zulu
-        java-version: 8.0.312+7
 
     # - name: Set up nexus
     #   uses: s4u/maven-settings-action@v2.3.0
