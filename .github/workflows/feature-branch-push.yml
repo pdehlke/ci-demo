@@ -20,10 +20,10 @@ jobs:
         repositories: '[{ "id": "github-packages", "url": "https://maven.pkg.github.com/sabio-engineering/*" }]'
         servers: '[{
             "id": "github-packages",
-            "username": "read-only-access",
+            "username": "${{ secrets.NEXUS_USERNAME }}",
             "password": "${{ secrets.NEXUS_PASSWORD }}"
           }, {
-            "id": "fubar",
+            "id": "dev-nexus-abvprp",
             "username": "${{ secrets.NEXUS_USERNAME }}",
             "password": "${{ secrets.NEXUS_PASSWORD }}"
           }]'
@@ -108,11 +108,11 @@ jobs:
       id: dependencies
       run: npm install @commitlint/config-conventional
 
-    - name: Lint commit messages
-      id: commitlint
-      uses: wagoid/commitlint-github-action@v4
-      with:
-        configFile: .commitlint.config.js
+    # - name: Lint commit messages
+    #   id: commitlint
+    #   uses: wagoid/commitlint-github-action@v4
+    #   with:
+    #     configFile: .commitlint.config.js
 
     - name: maven verify
       id: verify
