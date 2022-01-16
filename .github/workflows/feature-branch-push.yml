@@ -46,7 +46,7 @@ jobs:
           "url": "https://nexus.dev.abvprp.com/repository/Public-Repositories/"
         }]'
         
-    - run: cat .m2/settings.xml
+    - run: cat $HOME/.m2/settings.xml
 
     - name: Install Commitlint Dependencies
       id: dependencies
