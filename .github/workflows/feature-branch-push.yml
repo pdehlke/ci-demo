@@ -56,45 +56,65 @@ jobs:
     - name: maven-settings-xml-action
       uses: whelk-io/maven-settings-xml-action@v20
       with:
-        output_file: m2_settings.xml
-        servers: >
-          [
-            {
-              "id": "dev-nexus-abvprp",
-              "username": "${{ secrets.NEXUS_USERNAME }}",
-              "password": "${{ secrets.NEXUS_PASSWORD }}"
-            },
-            {
-              "id": "github-packages",
-              "username": "${{secrets.GH_USER }}",
-              "password": "${{ secrets.GH_PASSWORD }}"
-            },
-            {
-              "id": "github",
-              "username": "${{ github.actor }}",
-              "password": "${{ secrets.GITHUB_TOKEN }}"
-            }
-          ]
         repositories: >
           [
             {
-              "id": "github-packages",
-              "url": "https://maven.pkg.github.com/aboveproperty/*"
+              "id": "some-repository",
+              "name": "some-repository-name",
+              "url": "http://some.repository.url",
+              "releases": {
+                "enabled": "true",
+                "updatePolicy": "always",
+                "checksumPolicy": "fail"
+              },
+              "snapshots": {
+                "enabled": "false",
+                "updatePolicy": "always",
+                "checksumPolicy": "fail"
+              }
+            }
+          ]
+        plugin_repositories: >
+          [
+            {
+              "id": "some-plugin-repository",
+              "name": "some-plugin-repository-name",
+              "url": "http://some.plugin.repository.url",
+              "releases": {
+                "enabled": "true"
+              },
+              "snapshots": {
+                "enabled": "false"
+              }
+            }
+          ]
+        servers: >
+          [
+            {
+              "id": "some-id",
+              "username": "${env.USER}",
+              "password": "${env.PASS}",
+              "configuration": {
+                "httpConfiguration": {
+                  "all": {
+                    "usePreemptive": "true"
+                  }
+                }
+              }
             }
           ]
         mirrors: >
           [
             {
-              "id": "dev-nexus-abvprp",
-              "name": "Above Property Nexus",
-              "mirrorOf": "external:*,!github-packages",
-              "url": "https://nexus.dev.abvprp.com/repository/Public-Repositories/"
+              "id": "nexus",
+              "mirrorOf": "!my-org-snapshots,*",
+              "url": "http://redacted/nexus/content/groups/public"
             }
           ]
         profiles: >
           [
             {
-              "id": "AboveProperty-Profile",
+              "id": "foo.profile",
               "name": "foo.profile",
               "url": "http://foo.bar.profile",
               "properties": {
@@ -103,11 +123,28 @@ jobs:
               }
             }
           ]
+        plugin_groups: >
+          [
+            "some.plugin.group.id",
+            "some.other.plugin.group.id"
+          ]
+        proxies: >
+          [
+            {
+              "id": "foo-proxy",
+              "active": "true",
+              "protocol": "http",
+              "host": "https://proxy.example.com",
+              "port": "443",
+              "username": "foo",
+              "password": "bar",
+              "nonProxyHosts": "noproxy1.example.com|noproxy2.example.com"
+            }
+          ]
         active_profiles: >
           [
-            "AboveProperty-Profile"
+            "some-profile"
           ]
-
     - run: cat m2_settings.xml
 
     - name: Install Commitlint Dependencies
