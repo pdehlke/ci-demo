@@ -16,8 +16,9 @@ jobs:
     - name: maven-settings-xml-action
       uses: whelk-io/maven-settings-xml-action@v20
       with:
-          repositories: '[{ "id": "github-packages", "url": "https://maven.pkg.github.com/sabio-engineering/*" }]'
-          servers: '[{ "id": "github-packages", "username": "read-only-access", "password": "${{ secrets.PACKAGE_ACCESS_TOKEN }}" }, { "id": "github", "username": "${{ github.actor }}", "password": "${{ secrets.GITHUB_TOKEN }}"}]'
+        output_file: m2_settings.xml
+        repositories: '[{ "id": "github-packages", "url": "https://maven.pkg.github.com/sabio-engineering/*" }]'
+        servers: '[{ "id": "github-packages", "username": "read-only-access", "password": "${{ secrets.NEXUS_PASSWORD }}" }, { "id": "fubar", "username": "${{ secrets.NEXUS_USERNAME }}", "password": "${{ secrets.NEXUS_PASSWORD }}"}]'
     - name: Cache Maven packages
       uses: actions/cache@v2
       with:
