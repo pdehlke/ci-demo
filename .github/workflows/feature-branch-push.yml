@@ -17,7 +17,13 @@ jobs:
       uses: whelk-io/maven-settings-xml-action@v20
       with:
         output_file: m2_settings.xml
-        repositories: '[{ "id": "github-packages", "url": "https://maven.pkg.github.com/sabio-engineering/*" }]'
+        repositories: >
+          [
+            {
+              "id": "github-packages",
+              "url": "https://maven.pkg.github.com/aboveproperty/*"
+            }
+          ]
         servers: '[{
             "id": "github-packages",
             "username": "${{ secrets.NEXUS_USERNAME }}",
@@ -114,9 +120,9 @@ jobs:
     #   with:
     #     configFile: .commitlint.config.js
 
-    - name: maven verify
-      id: verify
-      run: mvn --no-transfer-progress clean verify
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    # - name: maven verify
+    #   id: verify
+    #   run: mvn --no-transfer-progress clean verify
+    #   env:
+    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
