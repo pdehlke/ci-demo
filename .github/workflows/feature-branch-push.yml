@@ -47,6 +47,63 @@ jobs:
         }]'
         
     - run: cat $HOME/.m2/settings.xml
+    
+    - name: maven-settings-xml-action
+      uses: whelk-io/maven-settings-xml-action@v20
+      with:
+        output_file: m2_settings.xml
+        servers: >
+          [
+            {
+              "id": "dev-nexus-abvprp",
+              "username": "${{ secrets.NEXUS_USERNAME }}",
+              "password": "${{ secrets.NEXUS_PASSWORD }}"
+            },
+            {
+              "id": "github-packages",
+              "username": "${{secrets.GH_USER",
+              "password": "${{ secrets.GH_PASSWORD }}"
+            },
+            {
+              "id": "github",
+              "username": "${{ github.actor }}",
+              "password": "${{ secrets.GITHUB_TOKEN }}"
+            }
+          ]
+        repositories: >
+          [
+            {
+              "id": "github-packages",
+              "url": "https://maven.pkg.github.com/aboveproperty/*"
+            }
+          ]
+        mirrors: >
+          [
+            {
+              "id": "dev-nexus-abvprp",
+              "name": "Above Property Nexus",
+              "mirrorOf": "external:*,!github-packages",
+              "url": "https://nexus.dev.abvprp.com/repository/Public-Repositories/"
+            }
+          ]
+        profiles: >
+          [
+            {
+              "id": "AboveProperty-Profile",
+              "name": "foo.profile",
+              "url": "http://foo.bar.profile",
+              "properties": {
+                "foo": "property-1",
+                "bar": "property-2"
+              }
+            }
+          ]
+        active_profiles: >
+          [
+            "AboveProperty-Profile"
+          ]
+
+    - run: cat m2_settings.xml
 
     - name: Install Commitlint Dependencies
       id: dependencies
