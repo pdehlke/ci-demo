@@ -56,6 +56,7 @@ jobs:
     - name: maven-settings-xml-action
       uses: whelk-io/maven-settings-xml-action@v20
       with:
+        output_file: m2_settings.xml
         repositories: >
           [
             {
