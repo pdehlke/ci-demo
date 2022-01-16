@@ -30,25 +30,11 @@ jobs:
         servers: >
           [
             {
-              "id": "some-id",
-              "username": "${env.USER}",
-              "password": "${env.PASS}",
-              "configuration": {
-                "httpConfiguration": {
-                  "all": {
-                    "usePreemptive": "true"
-                  }
-                }
-              }
+              "id": "dev-nexus-abvprp",
+              "username": "${{ secrets.NEXUS_USERNAME }}",
+              "password": "${{ secrets.NEXUS_PASSWORD }}"
             }
           ]
-        # servers: >
-        #   [
-        #     {
-        #       "id": "dev-nexus-abvprp",
-        #       "username": "${{ secrets.NEXUS_USERNAME }}",
-        #       "password": "${{ secrets.NEXUS_PASSWORD }}"
-        #     },
         #     {
         #       "id": "github-packages",
         #       "username": "${{secrets.GH_USER }}",
