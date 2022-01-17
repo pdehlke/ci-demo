@@ -19,6 +19,7 @@ Find some related information, usage & CI examples in [jgitver-maven-plugin wiki
 This is a line of text to use for forcing even more patch builds.
 feat(release): US23456 force a build
 
+
 [Release-badge]: https://img.shields.io/github/workflow/status/aboveproperty/ci-cd-demo/Release?style=plastic
 [crates.io]: https://crates.io/crates/zoxide
 [releases]: https://github.com/orgs/aboveproperty/packages?repo_name=ci-cd-demo
