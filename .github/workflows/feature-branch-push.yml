@@ -34,8 +34,8 @@ jobs:
           ]
         servers: '[{
             "id": "github-packages",
-            "username": "${{ secrets.NEXUS_USERNAME }}",
-            "password": "${{ secrets.NEXUS_PASSWORD }}"
+            "username": "${{ secrets.GH_USERNAME }}",
+            "password": "${{ secrets.GH_PASSWORD }}"
           }, {
             "id": "dev-nexus-abvprp",
             "username": "${{ secrets.NEXUS_USERNAME }}",
@@ -54,17 +54,6 @@ jobs:
               "url": "https://nexus.dev.abvprp.com/repository/Public-Repositories/"
             }
           ]
-        # profiles: >
-        #   [
-        #     {
-        #       "id": "AboveProperty-Profile",
-        #       "url": "https://nexus.dev.abvprp.com/repository/Public-Repositories"
-        #     }
-        #   ]
-        # active_profiles: >
-        #   [
-        #     "AboveProperty-Profile"
-        #   ]
 
     # - run: cat .m2/settings.xml
 
@@ -74,27 +63,6 @@ jobs:
         path: ~/.m2
         key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
         restore-keys: ${{ runner.os }}-m2
-
-    # - name: Set up nexus
-    #   uses: s4u/maven-settings-action@v2.3.0
-    #   with:
-    #     servers: >
-    #       [
-    #         {
-    #             "id": "dev-nexus-abvprp",
-    #             "username": "${{ secrets.nexus_username }}",
-    #             "password": "${{ secrets.nexus_password }}"
-    #         }
-    #       ]
-    #     mirrors: >
-    #       [
-    #         {
-    #           "id": "dev-nexus-abvprp",
-    #           "name": "Above Property Nexus",
-    #           "mirrorOf": "external:*",
-    #           "url": "https://nexus.dev.abvprp.com/repository/Public-Repositories/"
-    #         }
-    #       ]
 
     - run: cat $HOME/.m2/settings.xml
 
