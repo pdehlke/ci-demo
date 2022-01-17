@@ -54,22 +54,17 @@ jobs:
               "url": "https://nexus.dev.abvprp.com/repository/Public-Repositories/"
             }
           ]
-        profiles: >
-          [
-            {
-              "id": "AboveProperty-Profile",
-              "name": "foo.profile",
-              "url": "http://foo.bar.profile",
-              "properties": {
-                "foo": "property-1",
-                "bar": "property-2"
-              }
-            }
-          ]
-        active_profiles: >
-          [
-            "AboveProperty-Profile"
-          ]
+        # profiles: >
+        #   [
+        #     {
+        #       "id": "AboveProperty-Profile",
+        #       "url": "https://nexus.dev.abvprp.com/repository/Public-Repositories"
+        #     }
+        #   ]
+        # active_profiles: >
+        #   [
+        #     "AboveProperty-Profile"
+        #   ]
 
     # - run: cat .m2/settings.xml
 
