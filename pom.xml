@@ -67,6 +67,16 @@
   </profiles>
   <dependencies>
     <dependency>
+      <groupId>com.abvprp.aps</groupId>
+      <artifactId>aps-java-client</artifactId>
+      <version>0.1.0</version>
+    </dependency>
+    <dependency>
+      <groupId>com.abvprp</groupId>
+      <artifactId>aboveproperty-aps</artifactId>
+      <version>1.0.15</version>
+    </dependency>
+    <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>4.11</version>
