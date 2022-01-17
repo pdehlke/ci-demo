@@ -24,7 +24,7 @@ jobs:
     - name: maven-settings-xml-action
       uses: whelk-io/maven-settings-xml-action@v20
       with:
-        output_file: .m2/settings.xml
+        output_file: $HOME/.m2/settings.xml
         repositories: >
           [
             {
@@ -71,7 +71,7 @@ jobs:
             "AboveProperty-Profile"
           ]
 
-    - run: cat .m2/settings.xml
+    # - run: cat .m2/settings.xml
 
     - name: Cache Maven packages
       uses: actions/cache@v2
@@ -113,9 +113,9 @@ jobs:
     #   with:
     #     configFile: .commitlint.config.js
 
-    # - name: maven verify
-    #   id: verify
-    #   run: mvn --no-transfer-progress clean verify
-    #   env:
-    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: maven verify
+      id: verify
+      run: mvn clean deploy
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
