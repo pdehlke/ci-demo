@@ -1,17 +1,13 @@
 name: release
 
 on:
-  pull_request:
-    branches:
-      - main
-    types:
-      - closed
-
+  push:
+    branches: main
+    
 jobs:
   build:
     name: Build and Release
     runs-on: ubuntu-latest
-    if: github.event.pull_request.merged == true
     steps:
     - name: Check out code
       uses: actions/checkout@v2
@@ -29,12 +25,36 @@ jobs:
         skip-commit: true
         github-token: ${{ secrets.GITHUB_TOKEN }}
 
+    - name: Cache maven files
+      id: maven-cache
+      uses: actions/cache@v2
+      with:
+        path: ~/.m2/repository
+        key: maven-${{ hashFiles('**/pom.xml') }}
+        restore-keys: maven-
+
     - name: Set up JDK 1.8
       uses: actions/setup-java@v2
       with:
         cache: maven
         distribution: zulu
         java-version: 8.0.312+7
+
+    - name: Set up nexus
+      uses: s4u/maven-settings-action@v2.3.0
+      with:
+        servers: |
+          [{
+              "id": "dev-nexus-abvprp",
+              "username": "${{ secrets.nexus_username }}",
+              "password": "${{ secrets.nexus_password }}"
+          }]
+        mirrors: '[{
+          "id": "dev-nexus-abvprp",
+          "name": "Above Property Nexus",
+          "mirrorOf": "external:*",
+          "url": "https://nexus.dev.abvprp.com/repository/Public-Repositories/"
+        }]'
 
     - name: Deploy to GitHub
       run: mvn --no-transfer-progress -Djgitver.use-version=${{ steps.changelog.outputs.version }} -DuseGitHubPackages=true clean deploy
@@ -44,7 +64,7 @@ jobs:
     - name: Create a GitHub release
       uses: ncipollo/release-action@v1
       with:
-        artifacts: "target/*.jar,LICENSE.txt,target/CHANGELOG.md"
+        artifacts: "target/*.jar,target/CHANGELOG.md"
         tag: ${{ steps.changelog.outputs.tag }}
         name: Release ${{ steps.changelog.outputs.version }}
         body: ${{ steps.changelog.outputs.clean_changelog }}
@@ -53,11 +73,10 @@ jobs:
   notify:
       name: Notify on Slack
       runs-on: ubuntu-latest
-      if: github.event.pull_request.merged == true
       # Only run this workflow when "build" workflow succeeds
       needs: [build]
-      # Only run this workflow if it target is main branch on pull_request event
-#       if: ${{ github.base_ref == 'main' && github.event_name == 'pull_request' }}
+      # Only run this workflow if it target is main branch on a closed pull_request event with a merge
+      if: github.event.pull_request.merged == true
       steps:
         - uses: abinoda/slack-action@master
           env:
