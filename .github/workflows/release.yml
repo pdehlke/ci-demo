@@ -1,13 +1,17 @@
 name: release
 
 on:
-  push:
-    branches: main
-    
+  pull_request:
+    branches:
+      - main
+    types:
+      - closed
+
 jobs:
   build:
     name: Build and Release
     runs-on: ubuntu-latest
+    if: github.event.pull_request.merged == true
     steps:
     - name: Check out code
       uses: actions/checkout@v2
