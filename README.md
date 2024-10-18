@@ -1,6 +1,5 @@
 # CI demo of jgitver-maven-plugin
 
-
 <div align="center">
   
   
